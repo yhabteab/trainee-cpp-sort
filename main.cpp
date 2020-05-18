@@ -1,5 +1,8 @@
 #include <iostream>
 #include <vector>
+#include <fstream>
+#include <cstring>
+
 
 using namespace std;
 
@@ -9,8 +12,18 @@ void printSortedArray(const vector<string> &arr);
 
 int main(int argc, char **argv) {
     vector<string> stringVector;
-    for (string line; getline(cin, line);) {
-        stringVector.emplace_back(line);
+
+    if (argc > 1 && strcmp(argv[1], "-") != 0) {
+        ifstream file{argv[1]};
+        for (string line; getline(file, line);) {
+            stringVector.emplace_back(line);
+        }
+
+        file.close();
+    } else {
+        for (string line; getline(cin, line);) {
+            stringVector.emplace_back(line);
+        }
     }
 
     bubbleSort(stringVector, stringVector.size());
