@@ -1,13 +1,13 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
-#include <unistd.h>
+#include <getopt.h>
 #include <boost/lexical_cast.hpp>
 
 using namespace std;
 
-void bubbleSort(vector<string> &arr, size_t length,
-                bool (*funcCallback)(string &, string &));
+vector<string> bubbleSort(vector<string> arr, size_t length,
+                          bool (*funcCallback)(string &, string &));
 
 void printSortedArray(const vector<string> &arr);
 
@@ -17,13 +17,21 @@ bool checkNumeric(string &firstNum, string &secondNum);
 
 int main(int argc, char **argv) {
     vector<string> stringVector;
-    int $options{};
-    bool (* funcCallback)(string &, string &) = checkForEquality;
+    int options, optionIndex = 0;
+    bool isOptionO{false};
+    bool (*funcCallback)(string &, string &) = checkForEquality;
+    static struct option $longOptions[] = {
+            {"numeric-sort", no_argument,       nullptr, 'n'},
+            {"output",       required_argument, nullptr, 'o'},
+    };
 
-    while (($options = getopt(argc, argv, "n")) != -1) {
-        switch ($options) {
+    while ((options = getopt_long(argc, argv, "no:", $longOptions, &optionIndex)) != -1) {
+        switch (options) {
             case 'n':
                 funcCallback = checkNumeric;
+                break;
+            case 'o':
+                isOptionO = true;
                 break;
             default: /* For invalid option e.g '?' */
                 exit(EXIT_FAILURE);
@@ -31,7 +39,7 @@ int main(int argc, char **argv) {
     }
 
     if (argv[optind] != nullptr) {
-        ifstream file{argv[optind]};
+        fstream file{argv[optind]};
         for (string line; getline(file, line);) {
             stringVector.emplace_back(line);
         }
@@ -44,15 +52,34 @@ int main(int argc, char **argv) {
     }
 
     size_t vectorSize = stringVector.size();
+    vector<string> sortedElement = bubbleSort(stringVector, vectorSize, funcCallback);
+    if (isOptionO) {
+        for (int i = 0; i < argc; ++i) {
+            if (strcmp(argv[i], "-o") == 0 || strcmp(argv[i], "--output") == 0) {
+                ofstream file{argv[i + 1]};
+                if (file.is_open() && file.good()) {
+                    for (const auto &line: sortedElement) {
+                        file << line << endl;
+                    }
 
-    bubbleSort(stringVector, vectorSize, funcCallback);
-    printSortedArray(stringVector);
+                    file.close();
+                } else {
+                    printf("Could not open file name %s", argv[i + 1]);
+                    break;
+                }
+
+                break;
+            }
+        }
+    } else {
+        printSortedArray(sortedElement);
+    }
 
     return EXIT_SUCCESS;
 }
 
-void bubbleSort(vector<string> &arr, size_t length,
-                bool (*funcCallback)(string &, string &)) {
+vector<string> bubbleSort(vector<string> arr, size_t length,
+                          bool (*funcCallback)(string &, string &)) {
     bool isSwapped = true;
 
     for (size_t i{0}; (i < length - 1) && (isSwapped); i++) {
@@ -65,6 +92,8 @@ void bubbleSort(vector<string> &arr, size_t length,
             }
         }
     }
+
+    return arr;
 }
 
 void printSortedArray(const vector<string> &arr) {
