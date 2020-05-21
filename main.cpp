@@ -20,15 +20,16 @@ int main(int argc, char **argv) {
     vector<string> stringVector;
     string fileName;
     int options, optionIndex = 0;
-    bool isOptionO{false}, isUnique{false};
+    bool isOptionO{false}, isUnique{false}, ignoreBlanks{false};
     bool (*funcCallback)(string &, string &) = checkForEquality;
     static struct option $longOptions[] = {
-            {"numeric-sort", no_argument,       nullptr, 'n'},
-            {"output",       required_argument, nullptr, 'o'},
-            {"unique",       no_argument,       nullptr, 'u'},
+            {"numeric-sort",          no_argument,       nullptr, 'n'},
+            {"output",                required_argument, nullptr, 'o'},
+            {"unique",                no_argument,       nullptr, 'u'},
+            {"ignore-leading-blanks", no_argument,       nullptr, 'b'},
     };
 
-    while ((options = getopt_long(argc, argv, "no:u", $longOptions, &optionIndex)) != -1) {
+    while ((options = getopt_long(argc, argv, "no:ub", $longOptions, &optionIndex)) != -1) {
         switch (options) {
             case 'n':
                 funcCallback = checkNumeric;
@@ -40,6 +41,9 @@ int main(int argc, char **argv) {
             case 'u':
                 isUnique = true;
                 break;
+            case 'b':
+                ignoreBlanks = true;
+                break;
             default: /* For invalid option e.g '?' */
                 exit(EXIT_FAILURE);
         }
@@ -48,12 +52,18 @@ int main(int argc, char **argv) {
     if (argv[optind] != nullptr) {
         fstream file{argv[optind]};
         for (string line; getline(file, line);) {
+            if (ignoreBlanks && line == "\n") {
+                continue;
+            }
             stringVector.emplace_back(line);
         }
 
         file.close();
     } else {
         for (string line; getline(cin, line);) {
+            if (ignoreBlanks && line == "\n") {
+                continue;
+            }
             stringVector.emplace_back(line);
         }
     }
