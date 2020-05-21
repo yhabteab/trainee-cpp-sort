@@ -2,6 +2,7 @@
 #include <vector>
 #include <fstream>
 #include <getopt.h>
+#include <set>
 #include <boost/lexical_cast.hpp>
 
 using namespace std;
@@ -17,21 +18,27 @@ bool checkNumeric(string &firstNum, string &secondNum);
 
 int main(int argc, char **argv) {
     vector<string> stringVector;
+    string fileName;
     int options, optionIndex = 0;
-    bool isOptionO{false};
+    bool isOptionO{false}, isUnique{false};
     bool (*funcCallback)(string &, string &) = checkForEquality;
     static struct option $longOptions[] = {
             {"numeric-sort", no_argument,       nullptr, 'n'},
             {"output",       required_argument, nullptr, 'o'},
+            {"unique",       no_argument,       nullptr, 'u'},
     };
 
-    while ((options = getopt_long(argc, argv, "no:", $longOptions, &optionIndex)) != -1) {
+    while ((options = getopt_long(argc, argv, "no:u", $longOptions, &optionIndex)) != -1) {
         switch (options) {
             case 'n':
                 funcCallback = checkNumeric;
                 break;
             case 'o':
                 isOptionO = true;
+                fileName = optarg;
+                break;
+            case 'u':
+                isUnique = true;
                 break;
             default: /* For invalid option e.g '?' */
                 exit(EXIT_FAILURE);
@@ -51,25 +58,24 @@ int main(int argc, char **argv) {
         }
     }
 
+    if (isUnique) {
+        set<string> s(stringVector.begin(), stringVector.end());
+        stringVector.assign(s.begin(), s.end());
+    }
+
     size_t vectorSize = stringVector.size();
     vector<string> sortedElement = bubbleSort(stringVector, vectorSize, funcCallback);
     if (isOptionO) {
-        for (int i = 0; i < argc; ++i) {
-            if (strcmp(argv[i], "-o") == 0 || strcmp(argv[i], "--output") == 0) {
-                ofstream file{argv[i + 1]};
-                if (file.is_open() && file.good()) {
-                    for (const auto &line: sortedElement) {
-                        file << line << endl;
-                    }
-
-                    file.close();
-                } else {
-                    printf("Could not open file name %s", argv[i + 1]);
-                    break;
-                }
-
-                break;
+        ofstream file{fileName};
+        if (file.is_open() && file.good()) {
+            for (const auto &line: sortedElement) {
+                file << line << endl;
             }
+
+            file.close();
+        } else {
+            printf("Could not open file name %s", fileName.c_str());
+            exit(EXIT_FAILURE);
         }
     } else {
         printSortedArray(sortedElement);
