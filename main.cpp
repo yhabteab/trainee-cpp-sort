@@ -9,8 +9,11 @@
 
 using namespace std;
 
-vector<string> bubbleSort(vector<string> arr, size_t length,
-                          bool (*funcCallback)(string &, string &));
+void bubbleSort(vector<string> &arr, size_t length,
+                bool (*funcCallback)(string &, string &));
+
+void quickSort(vector<string> &arr, int low, int high,
+               bool (*funcCallback)(string &, string &));
 
 void printSortedArray(const vector<string> &arr);
 
@@ -35,9 +38,10 @@ int main(int argc, char **argv) {
             {"ignore-case",           no_argument,       nullptr, 'f'},
             {"random-sort",           no_argument,       nullptr, 'R'},
             {"reverse",               no_argument,       nullptr, 'r'},
+            {"quick-sort",            no_argument,       nullptr, 'q'},
     };
 
-    while ((options = getopt_long(argc, argv, "no:ubfRr", $longOptions, &optionIndex)) != -1) {
+    while ((options = getopt_long(argc, argv, "no:ubfRrq", $longOptions, &optionIndex)) != -1) {
         switch (options) {
             case 'n':
                 mapOption.insert(make_pair("n", "numeric-sort"));
@@ -61,6 +65,9 @@ int main(int argc, char **argv) {
                 break;
             case 'r':
                 mapOption.insert(make_pair("r", "reverse"));
+                break;
+            case 'q':
+                mapOption.insert(make_pair("q", "quick-sort"));
                 break;
             default: /* For invalid option e.g '?' */
                 exit(EXIT_FAILURE);
@@ -99,24 +106,25 @@ int main(int argc, char **argv) {
         }
     }
 
-    size_t vectorSize = stringVector.size();
-    vector<string> sortedElement{stringVector};
+    int vectorSize = stringVector.size();
 
     if (key_exists(mapOption, "R")) {
         random_device randomDevice;
-        shuffle(sortedElement.begin(), sortedElement.end(), randomDevice);
+        shuffle(stringVector.begin(), stringVector.end(), randomDevice);
+    } else if (key_exists(mapOption, "q")) {
+        quickSort(stringVector, 0, vectorSize - 1, funcCallback);
     } else {
-        sortedElement = bubbleSort(stringVector, vectorSize, funcCallback);
+        bubbleSort(stringVector, vectorSize, funcCallback);
     }
 
     if (key_exists(mapOption, "r")) {
-        reverse(sortedElement.begin(), sortedElement.end());
+        reverse(stringVector.begin(), stringVector.end());
     }
 
     if (key_exists(mapOption, "o")) {
         ofstream file{fileName};
         if (file.is_open() && file.good()) {
-            for (const auto &line: sortedElement) {
+            for (const auto &line: stringVector) {
                 file << line << endl;
             }
 
@@ -126,14 +134,14 @@ int main(int argc, char **argv) {
             exit(EXIT_FAILURE);
         }
     } else {
-        printSortedArray(sortedElement);
+        printSortedArray(stringVector);
     }
 
     return EXIT_SUCCESS;
 }
 
-vector<string> bubbleSort(vector<string> arr, size_t length,
-                          bool (*funcCallback)(string &, string &)) {
+void bubbleSort(vector<string> &arr, size_t length,
+                bool (*funcCallback)(string &, string &)) {
     bool isSwapped = true;
 
     for (size_t i{0}; (i < length - 1) && (isSwapped); i++) {
@@ -146,8 +154,28 @@ vector<string> bubbleSort(vector<string> arr, size_t length,
             }
         }
     }
+}
 
-    return arr;
+void quickSort(vector<string> &arr, int low, int high,
+               bool (*funcCallback)(string &, string &)) {
+    if (low < high) {
+        string pivot = arr.at(high);
+        int i = (low - 1);
+
+        for (int j = low; j <= high - 1; j++) {
+            if (funcCallback(arr.at(j), pivot)) {
+                i++;
+                swap(arr.at(i), arr.at(j));
+            }
+        }
+
+        swap(arr.at(i + 1), arr.at(high));
+
+        int newPivot = i + 1;
+
+        quickSort(arr, low, newPivot - 1, funcCallback);
+        quickSort(arr, newPivot + 1, high, funcCallback);
+    }
 }
 
 void printSortedArray(const vector<string> &arr) {
@@ -164,12 +192,25 @@ bool checkNumeric(string &firstNum, string &secondNum) {
     if (firstNum.empty() || secondNum.empty()) {
         return false;
     }
+    char character2, character1;
 
-    try {
+    string::const_iterator it = firstNum.begin();
+    string::const_iterator iterator = secondNum.begin();
+    while (it != firstNum.end() && isdigit(*it)) ++it;
+    while (iterator != secondNum.end() && isdigit(*iterator)) ++iterator;
+
+    if (!firstNum.empty() && it == firstNum.end() && !secondNum.empty() && iterator == secondNum.end()) {
         return boost::lexical_cast<int>(firstNum) < boost::lexical_cast<int>(secondNum);
-    } catch (boost::bad_lexical_cast &$error) {
-        return static_cast<int>(boost::lexical_cast<char>(firstNum)) <
-               static_cast<int>(boost::lexical_cast<char>(secondNum));
+    } else {
+        for (auto &lin : firstNum) {
+            character1 = lin;
+        }
+
+        for (auto &line : secondNum) {
+            character2 = line;
+        }
+
+        return (int) character1 < (int) character2;
     }
 }
 
