@@ -1,8 +1,9 @@
 #include <iostream>
-#include <vector>
 #include <fstream>
+#include <vector>
 #include <getopt.h>
 #include <set>
+#include <map>
 #include <boost/lexical_cast.hpp>
 
 using namespace std;
@@ -16,33 +17,41 @@ bool checkForEquality(string &firstNum, string &secondNum);
 
 bool checkNumeric(string &firstNum, string &secondNum);
 
+template<typename T, typename Key>
+bool key_exists(const T &container, const Key &key);
+
 int main(int argc, char **argv) {
     vector<string> stringVector;
     string fileName;
+    map<string, string> mapOption{};
     int options, optionIndex = 0;
-    bool isOptionO{false}, isUnique{false}, ignoreBlanks{false};
     bool (*funcCallback)(string &, string &) = checkForEquality;
     static struct option $longOptions[] = {
             {"numeric-sort",          no_argument,       nullptr, 'n'},
             {"output",                required_argument, nullptr, 'o'},
             {"unique",                no_argument,       nullptr, 'u'},
             {"ignore-leading-blanks", no_argument,       nullptr, 'b'},
+            {"ignore-case",           no_argument,       nullptr, 'f'},
     };
 
-    while ((options = getopt_long(argc, argv, "no:ub", $longOptions, &optionIndex)) != -1) {
+    while ((options = getopt_long(argc, argv, "no:ubf", $longOptions, &optionIndex)) != -1) {
         switch (options) {
             case 'n':
+                mapOption.insert(make_pair("n", "numeric-sort"));
                 funcCallback = checkNumeric;
                 break;
             case 'o':
-                isOptionO = true;
+                mapOption.insert(make_pair("o", "output"));
                 fileName = optarg;
                 break;
             case 'u':
-                isUnique = true;
+                mapOption.insert(make_pair("u", "unique"));
                 break;
             case 'b':
-                ignoreBlanks = true;
+                mapOption.insert(make_pair("b", "ignore-leading-blanks"));
+                break;
+            case 'f':
+                mapOption.insert(make_pair("f", "ignore-case"));
                 break;
             default: /* For invalid option e.g '?' */
                 exit(EXIT_FAILURE);
@@ -52,30 +61,38 @@ int main(int argc, char **argv) {
     if (argv[optind] != nullptr) {
         fstream file{argv[optind]};
         for (string line; getline(file, line);) {
-            if (ignoreBlanks && line == "\n") {
+            if (key_exists(mapOption, "b") && line.empty()) {
                 continue;
             }
+
             stringVector.emplace_back(line);
         }
 
         file.close();
     } else {
         for (string line; getline(cin, line);) {
-            if (ignoreBlanks && line == "\n") {
+            if (key_exists(mapOption, "b") && line.empty()) {
                 continue;
             }
+
             stringVector.emplace_back(line);
         }
     }
 
-    if (isUnique) {
+    if (key_exists(mapOption, "u")) {
         set<string> s(stringVector.begin(), stringVector.end());
         stringVector.assign(s.begin(), s.end());
+    } else if (key_exists(mapOption, "f")) {
+        for (auto &line : stringVector) {
+            for (auto &c : line) {
+                c = toupper(c);
+            }
+        }
     }
 
     size_t vectorSize = stringVector.size();
     vector<string> sortedElement = bubbleSort(stringVector, vectorSize, funcCallback);
-    if (isOptionO) {
+    if (key_exists(mapOption, "o")) {
         ofstream file{fileName};
         if (file.is_open() && file.good()) {
             for (const auto &line: sortedElement) {
@@ -123,5 +140,19 @@ bool checkForEquality(string &firstNum, string &secondNum) {
 }
 
 bool checkNumeric(string &firstNum, string &secondNum) {
-    return boost::lexical_cast<int>(firstNum) < boost::lexical_cast<int>(secondNum);
+    if (firstNum.empty() || secondNum.empty()) {
+        return false;
+    }
+
+    try {
+        return boost::lexical_cast<int>(firstNum) < boost::lexical_cast<int>(secondNum);
+    } catch (boost::bad_lexical_cast &$error) {
+        return static_cast<int>(boost::lexical_cast<char>(firstNum)) <
+               static_cast<int>(boost::lexical_cast<char>(secondNum));
+    }
+}
+
+template<typename T, typename Key>
+bool key_exists(const T &container, const Key &key) {
+    return container.find(key) != end(container);
 }
