@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <random>
 #include <vector>
 #include <getopt.h>
 #include <set>
@@ -32,9 +33,10 @@ int main(int argc, char **argv) {
             {"unique",                no_argument,       nullptr, 'u'},
             {"ignore-leading-blanks", no_argument,       nullptr, 'b'},
             {"ignore-case",           no_argument,       nullptr, 'f'},
+            {"random-sort",           no_argument,       nullptr, 'R'},
     };
 
-    while ((options = getopt_long(argc, argv, "no:ubf", $longOptions, &optionIndex)) != -1) {
+    while ((options = getopt_long(argc, argv, "no:ubfR", $longOptions, &optionIndex)) != -1) {
         switch (options) {
             case 'n':
                 mapOption.insert(make_pair("n", "numeric-sort"));
@@ -52,6 +54,9 @@ int main(int argc, char **argv) {
                 break;
             case 'f':
                 mapOption.insert(make_pair("f", "ignore-case"));
+                break;
+            case 'R':
+                mapOption.insert(make_pair("R", "random-sort"));
                 break;
             default: /* For invalid option e.g '?' */
                 exit(EXIT_FAILURE);
@@ -91,7 +96,15 @@ int main(int argc, char **argv) {
     }
 
     size_t vectorSize = stringVector.size();
-    vector<string> sortedElement = bubbleSort(stringVector, vectorSize, funcCallback);
+    vector<string> sortedElement {stringVector};
+
+    if (key_exists(mapOption, "R")) {
+        random_device randomDevice;
+        shuffle(sortedElement.begin(), sortedElement.end(), randomDevice);
+    } else {
+        sortedElement = bubbleSort(stringVector, vectorSize, funcCallback);
+    }
+
     if (key_exists(mapOption, "o")) {
         ofstream file{fileName};
         if (file.is_open() && file.good()) {
