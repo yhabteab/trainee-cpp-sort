@@ -34,9 +34,10 @@ int main(int argc, char **argv) {
             {"ignore-leading-blanks", no_argument,       nullptr, 'b'},
             {"ignore-case",           no_argument,       nullptr, 'f'},
             {"random-sort",           no_argument,       nullptr, 'R'},
+            {"reverse",               no_argument,       nullptr, 'r'},
     };
 
-    while ((options = getopt_long(argc, argv, "no:ubfR", $longOptions, &optionIndex)) != -1) {
+    while ((options = getopt_long(argc, argv, "no:ubfRr", $longOptions, &optionIndex)) != -1) {
         switch (options) {
             case 'n':
                 mapOption.insert(make_pair("n", "numeric-sort"));
@@ -57,6 +58,9 @@ int main(int argc, char **argv) {
                 break;
             case 'R':
                 mapOption.insert(make_pair("R", "random-sort"));
+                break;
+            case 'r':
+                mapOption.insert(make_pair("r", "reverse"));
                 break;
             default: /* For invalid option e.g '?' */
                 exit(EXIT_FAILURE);
@@ -96,13 +100,17 @@ int main(int argc, char **argv) {
     }
 
     size_t vectorSize = stringVector.size();
-    vector<string> sortedElement {stringVector};
+    vector<string> sortedElement{stringVector};
 
     if (key_exists(mapOption, "R")) {
         random_device randomDevice;
         shuffle(sortedElement.begin(), sortedElement.end(), randomDevice);
     } else {
         sortedElement = bubbleSort(stringVector, vectorSize, funcCallback);
+    }
+
+    if (key_exists(mapOption, "r")) {
+        reverse(sortedElement.begin(), sortedElement.end());
     }
 
     if (key_exists(mapOption, "o")) {
