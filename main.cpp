@@ -1,10 +1,10 @@
 // sort | (c) 2020 Icinga GmbH | GPLv2+
 
+#include <getopt.h>
 #include <iostream>
 #include <fstream>
 #include <random>
 #include <vector>
-#include <getopt.h>
 #include <set>
 #include <map>
 #include <boost/lexical_cast.hpp>
