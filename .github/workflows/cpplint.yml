@@ -3,10 +3,11 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
-      run: apt install libboost-all-dev
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-python@v1
+      - name: Install Dependencies
+        run: sudo apt-get install -y libboost-all-dev
       - run: pip install cpplint
       # - run: cpplint --filter=  # print out all cpplint rules
       - run: cpplint --recursive . || true  # all issues to be fixed
