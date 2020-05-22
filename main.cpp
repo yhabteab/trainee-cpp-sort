@@ -9,13 +9,20 @@
 
 using namespace std;
 
-void bubbleSort(vector<string> &arr, size_t length,
+template<typename T>
+void bubbleSort(vector<T> &arr, size_t length,
                 bool (*funcCallback)(string &, string &));
 
-void quickSort(vector<string> &arr, int low, int high,
+template<typename T>
+void quickSort(vector<T> &arr, int low, int high,
                bool (*funcCallback)(string &, string &));
 
-void printSortedArray(const vector<string> &arr);
+template<typename T>
+void mergeSort(vector<T> &arr, int begin, int vecSize,
+               bool (*funcCallback)(string &, string &));
+
+template<typename T>
+void printSortedArray(const vector<T> &arr);
 
 bool checkForEquality(string &firstNum, string &secondNum);
 
@@ -39,9 +46,10 @@ int main(int argc, char **argv) {
             {"random-sort",           no_argument,       nullptr, 'R'},
             {"reverse",               no_argument,       nullptr, 'r'},
             {"quick-sort",            no_argument,       nullptr, 'q'},
+            {"merge-sort",            no_argument,       nullptr, 'm'},
     };
 
-    while ((options = getopt_long(argc, argv, "no:ubfRrq", $longOptions, &optionIndex)) != -1) {
+    while ((options = getopt_long(argc, argv, "no:ubfRrqm", $longOptions, &optionIndex)) != -1) {
         switch (options) {
             case 'n':
                 mapOption.insert(make_pair("n", "numeric-sort"));
@@ -68,6 +76,9 @@ int main(int argc, char **argv) {
                 break;
             case 'q':
                 mapOption.insert(make_pair("q", "quick-sort"));
+                break;
+            case 'm':
+                mapOption.insert(make_pair("m", "merge-sort"));
                 break;
             default: /* For invalid option e.g '?' */
                 exit(EXIT_FAILURE);
@@ -113,6 +124,8 @@ int main(int argc, char **argv) {
         shuffle(stringVector.begin(), stringVector.end(), randomDevice);
     } else if (key_exists(mapOption, "q")) {
         quickSort(stringVector, 0, vectorSize - 1, funcCallback);
+    } else if (key_exists(mapOption, "m")) {
+        mergeSort(stringVector, 0, vectorSize - 1, funcCallback);
     } else {
         bubbleSort(stringVector, vectorSize, funcCallback);
     }
@@ -140,7 +153,8 @@ int main(int argc, char **argv) {
     return EXIT_SUCCESS;
 }
 
-void bubbleSort(vector<string> &arr, size_t length,
+template<typename T>
+void bubbleSort(vector<T> &arr, size_t length,
                 bool (*funcCallback)(string &, string &)) {
     bool isSwapped = true;
 
@@ -156,7 +170,8 @@ void bubbleSort(vector<string> &arr, size_t length,
     }
 }
 
-void quickSort(vector<string> &arr, int low, int high,
+template<typename T>
+void quickSort(vector<T> &arr, int low, int high,
                bool (*funcCallback)(string &, string &)) {
     if (low < high) {
         string pivot = arr.at(high);
@@ -178,7 +193,41 @@ void quickSort(vector<string> &arr, int low, int high,
     }
 }
 
-void printSortedArray(const vector<string> &arr) {
+template<typename T>
+void mergeSort(vector<T> &arr, int begin, int vecSize,
+               bool (*funcCallback)(string &, string &)) {
+    if (begin == vecSize){
+        return;
+    }
+
+    int middle = (begin + vecSize) / 2;
+    mergeSort(arr, begin, middle, funcCallback);
+    mergeSort(arr, middle + 1, vecSize, funcCallback);
+
+    int i = begin, j = middle + 1;
+    int l = vecSize - begin + 1;
+    T *tempVec = new T [l];
+
+    for (int k{}; k < l; k++){
+        if (j > vecSize || (i <= middle && funcCallback(arr[i], arr[j]))){
+            tempVec[k] = arr.at(i);
+            i++;
+        }
+        else{
+            tempVec[k] = arr.at(j);
+            j++;
+        }
+    }
+
+    for (int k = 0, n = begin; k < l; k++, n++){
+        arr.at(n) = tempVec[k];
+    }
+
+    delete [] tempVec;
+}
+
+template<typename T>
+void printSortedArray(const vector<T> &arr) {
     for (const auto &num: arr) {
         cout << num << endl;
     }
