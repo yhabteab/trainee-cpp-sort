@@ -1,3 +1,5 @@
+// sort | (c) 2020 Icinga GmbH | GPLv2+
+
 #include <iostream>
 #include <fstream>
 #include <random>
@@ -272,6 +274,11 @@ bool checkNumeric(string &firstNum, string &secondNum) {
     }
 }
 
+template<typename T, typename Key>
+bool key_exists(const T &container, const Key &key) {
+    return container.find(key) != end(container);
+}
+
 void printHelp() {
     cout << "Usage: Program PATH [OPTION] < [FILE] ...\n"
             " or: Program PATH [OPTION] file name\n"
@@ -297,9 +304,4 @@ void printHelp() {
             "Thanks for using my sort program :)\n";
 
     exit(EXIT_SUCCESS);
-}
-
-template<typename T, typename Key>
-bool key_exists(const T &container, const Key &key) {
-    return container.find(key) != end(container);
 }
