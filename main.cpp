@@ -208,7 +208,7 @@ void quickSort(vector<T> &arr, int low, int high,
 template<typename T>
 void mergeSort(vector<T> &arr, int begin, int vecSize,
                bool (*funcCallback)(string &, string &)) {
-    if (begin == vecSize || vecSize <= 1) {
+    if (vecSize <= 1) {
         return;
     }
 
