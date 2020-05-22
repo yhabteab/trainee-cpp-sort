@@ -294,6 +294,7 @@ void printHelp() {
     cout << "Arguments required for long options "
             "are also required for short ones.\n"
             "Sort options:\n\n";
+
     cout << "-b, --ignore-leading-blanks    führende Leerzeichen ignorieren\n"
             "-f, --ignore-case              Klein- als "
                                             "Großbuchstaben behandeln\n"
