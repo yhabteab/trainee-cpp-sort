@@ -31,6 +31,8 @@ bool checkNumeric(string &firstNum, string &secondNum);
 template<typename T, typename Key>
 bool key_exists(const T &container, const Key &key);
 
+void printHelp();
+
 int main(int argc, char **argv) {
     vector<string> stringVector;
     string fileName;
@@ -47,9 +49,10 @@ int main(int argc, char **argv) {
             {"reverse",               no_argument,       nullptr, 'r'},
             {"quick-sort",            no_argument,       nullptr, 'q'},
             {"merge-sort",            no_argument,       nullptr, 'm'},
+            {"help",                  no_argument,       nullptr, 'h'},
     };
 
-    while ((options = getopt_long(argc, argv, "no:ubfRrqm", $longOptions, &optionIndex)) != -1) {
+    while ((options = getopt_long(argc, argv, "no:ubfRrqmh", $longOptions, &optionIndex)) != -1) {
         switch (options) {
             case 'n':
                 mapOption.insert(make_pair("n", "numeric-sort"));
@@ -80,9 +83,16 @@ int main(int argc, char **argv) {
             case 'm':
                 mapOption.insert(make_pair("m", "merge-sort"));
                 break;
+            case 'h':
+                mapOption.insert(make_pair("h", "help"));
+                break;
             default: /* For invalid option e.g '?' */
                 exit(EXIT_FAILURE);
         }
+    }
+
+    if (key_exists(mapOption, "h")) {
+        printHelp();
     }
 
     if (argv[optind] != nullptr) {
@@ -196,7 +206,7 @@ void quickSort(vector<T> &arr, int low, int high,
 template<typename T>
 void mergeSort(vector<T> &arr, int begin, int vecSize,
                bool (*funcCallback)(string &, string &)) {
-    if (begin == vecSize){
+    if (begin == vecSize || vecSize <= 1) {
         return;
     }
 
@@ -206,24 +216,23 @@ void mergeSort(vector<T> &arr, int begin, int vecSize,
 
     int i = begin, j = middle + 1;
     int l = vecSize - begin + 1;
-    T *tempVec = new T [l];
+    T *tempVec = new T[l];
 
-    for (int k{}; k < l; k++){
-        if (j > vecSize || (i <= middle && funcCallback(arr[i], arr[j]))){
+    for (int k{}; k < l; k++) {
+        if (j > vecSize || (i <= middle && funcCallback(arr[i], arr[j]))) {
             tempVec[k] = arr.at(i);
             i++;
-        }
-        else{
+        } else {
             tempVec[k] = arr.at(j);
             j++;
         }
     }
 
-    for (int k = 0, n = begin; k < l; k++, n++){
+    for (int k = 0, n = begin; k < l; k++, n++) {
         arr.at(n) = tempVec[k];
     }
 
-    delete [] tempVec;
+    delete[] tempVec;
 }
 
 template<typename T>
@@ -261,6 +270,33 @@ bool checkNumeric(string &firstNum, string &secondNum) {
 
         return (int) character1 < (int) character2;
     }
+}
+
+void printHelp() {
+    cout << "Usage: Program PATH [OPTION] < [FILE] ...\n"
+            " or: Program PATH [OPTION] file name\n"
+            "If you execute the sort commands without the o parameter and a new text file,\n"
+            "it simply uses the standard output.\n\n";
+
+    cout << "Arguments required for long options are also required for short ones.\n"
+            "Sort options:\n\n";
+    cout << "-b, --ignore-leading-blanks    führende Leerzeichen ignorieren\n"
+            "-f, --ignore-case              Klein- als Großbuchstaben behandeln\n"
+            "-n, --numeric-sort             anhand des numerischen Werts sortieren\n"
+            "-R, --random-sort              anhand eines zufälligen Hash der Schlüssel\n"
+            "                               sortieren. Siehe shuf(1)\n"
+            "-r, --reverse                  das Ergebnis der Sortierung umkehren\n"
+            "-o, --output=FILE              Ergebnis in DATEI schreiben statt Standardausgabe\n"
+            "-m, --merge-sort               Merge sort Algorithm benutzen\n"
+            "-u, --unique                   Nur das erste von mehreren Gleichen ausgeben\n"
+            "-q, --quick-sort               Quick sort Algorithm benutzen\n"
+            "-h, --help                     Display this help and the program will be exited\n";
+
+    cout << "\n\nif you have any problem executing commands you can open an issue \n"
+            "in github or you can fix it yourself by opening a pull request \n\n"
+            "Thanks for using my sort program :)\n";
+
+    exit(EXIT_SUCCESS);
 }
 
 template<typename T, typename Key>
