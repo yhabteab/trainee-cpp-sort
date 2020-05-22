@@ -69,11 +69,10 @@ And if you want to store the sorted values ​​in a new file, you only have to
 
 ``./output -n -o output.txt in.txt`` OR ``./output -n --output output.txt < in.txt``
  then check the ``output.txt`` file.
- 
- 
- 
- 
-I hope you have as much fun with it as I have when coding
-and would be very happy if you would develop the program further or if you could give me suggestions how I can do it even better ..
+### CONTRIBUTING
+I hope you have as much fun with it as I have when coding and would be very happy if you would develop the program 
+further or if you could give me suggestions how I can do it even better. 
+
+Your are always welcome to contribute in this repository
 
 Thank you :+1:
