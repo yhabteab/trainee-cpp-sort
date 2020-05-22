@@ -26,7 +26,7 @@ To learn more about what they mean and what they are for, see the bunch of sort 
 | -h  | --help  | Display this help and exit the Program.       |
 
 
-### Examples of sort commandos..
+### Examples of sort commands..
 
 First of all we have to compile our code and this is done by doing the command as follows ``g++ -o output main.cpp``. 
 And the compiled code is saved in the ``output`` file as ``binary code``.
