@@ -13,22 +13,22 @@ using std::cout;
 
 template<typename T>
 void bubbleSort(std::vector<T> *arr, std::size_t length,
-                bool (*funcCallback)(std::string &, std::string &));
+                bool (*funcCallback)(std::string *, std::string *));
 
 template<typename T>
 void quickSort(std::vector<T> *arr, int low, int high,
-               bool (*funcCallback)(std::string &, std::string &));
+               bool (*funcCallback)(std::string *, std::string *));
 
 template<typename T>
 void mergeSort(std::vector<T> *arr, int begin, int vecSize,
-               bool (*funcCallback)(std::string &, std::string &));
+               bool (*funcCallback)(std::string *, std::string *));
 
 template<typename T>
 void printSortedArray(const std::vector<T> &arr);
 
-bool checkForEquality(std::string &firstNum, std::string &secondNum);
+bool checkForEquality(std::string *firstNum, std::string *secondNum);
 
-bool checkNumeric(std::string &firstNum, std::string &secondNum);
+bool checkNumeric(std::string *firstNum, std::string *secondNum);
 
 template<typename T, typename Key>
 bool key_exists(const T &container, const Key &key);
@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
     std::string fileName;
     std::map<std::string, std::string> mapOption{};
     int options, optionIndex = 0;
-    bool (*funcCallback)(std::string &, std::string &) = checkForEquality;
+    bool (*funcCallback)(std::string *, std::string *) = checkForEquality;
     static struct option $longOptions[] = {
             {"numeric-sort",          no_argument,       nullptr, 'n'},
             {"output",                required_argument, nullptr, 'o'},
@@ -54,7 +54,8 @@ int main(int argc, char **argv) {
             {"help",                  no_argument,       nullptr, 'h'},
     };
 
-    while ((options = getopt_long(argc, argv, "no:ubfRrqmh", $longOptions, &optionIndex)) != -1) {
+    while ((options = getopt_long(argc, argv, "no:ubfRrqmh",
+            $longOptions, &optionIndex)) != -1) {
         switch (options) {
             case 'n':
                 mapOption.insert(std::make_pair("n", "numeric-sort"));
@@ -167,13 +168,13 @@ int main(int argc, char **argv) {
 
 template<typename T>
 void bubbleSort(std::vector<T> *arr, std::size_t length,
-                bool (*funcCallback)(std::string &, std::string &)) {
+                bool (*funcCallback)(std::string *, std::string *)) {
     bool isSwapped = true;
 
     for (std::size_t i{0}; (i < length - 1) && (isSwapped); i++) {
         isSwapped = false;
         for (std::size_t j{0}; j < (length - i) - 1; j++) {
-            if (funcCallback(arr->at(j + 1), arr->at(j))) {
+            if (funcCallback(&arr->at(j + 1), &arr->at(j))) {
                 swap(arr->at(j + 1), arr->at(j));
 
                 isSwapped = true;
@@ -184,13 +185,13 @@ void bubbleSort(std::vector<T> *arr, std::size_t length,
 
 template<typename T>
 void quickSort(std::vector<T> *arr, int low, int high,
-               bool (*funcCallback)(std::string &, std::string &)) {
+               bool (*funcCallback)(std::string *, std::string *)) {
     if (low < high) {
         std::string pivot = arr->at(high);
         int i = (low - 1);
 
         for (int j = low; j <= high - 1; j++) {
-            if (funcCallback(arr->at(j), pivot)) {
+            if (funcCallback(&arr->at(j), &pivot)) {
                 i++;
                 swap(arr->at(i), arr->at(j));
             }
@@ -207,7 +208,7 @@ void quickSort(std::vector<T> *arr, int low, int high,
 
 template<typename T>
 void mergeSort(std::vector<T> *arr, int begin, int vecSize,
-               bool (*funcCallback)(std::string &, std::string &)) {
+               bool (*funcCallback)(std::string *, std::string *)) {
     if (begin >= vecSize) {
         return;
     }
@@ -221,7 +222,8 @@ void mergeSort(std::vector<T> *arr, int begin, int vecSize,
     T *tempVec = new T[l];
 
     for (int k{}; k < l; k++) {
-        if (j > vecSize || (i <= middle && funcCallback(arr->at(i), arr->at(j)))) {
+        if (j > vecSize || (i <= middle &&
+            funcCallback(&arr->at(i), &arr->at(j)))) {
             tempVec[k] = arr->at(i);
             i++;
         } else {
@@ -244,29 +246,31 @@ void printSortedArray(const std::vector<T> &arr) {
     }
 }
 
-bool checkForEquality(std::string &firstNum, std::string &secondNum) {
-    return firstNum < secondNum;
+bool checkForEquality(std::string *firstNum, std::string *secondNum) {
+    return *firstNum < *secondNum;
 }
 
-bool checkNumeric(std::string &firstNum, std::string &secondNum) {
-    if (firstNum.empty() || secondNum.empty()) {
+bool checkNumeric(std::string *firstNum, std::string *secondNum) {
+    if (firstNum->empty() || secondNum->empty()) {
         return false;
     }
     char character2, character1;
 
-    std::string::const_iterator it = firstNum.begin();
-    std::string::const_iterator iterator = secondNum.begin();
-    while (it != firstNum.end() && isdigit(*it)) ++it;
-    while (iterator != secondNum.end() && isdigit(*iterator)) ++iterator;
+    std::string::const_iterator it = firstNum->begin();
+    std::string::const_iterator iterator = secondNum->begin();
+    while (it != firstNum->end() && isdigit(*it)) ++it;
+    while (iterator != secondNum->end() && isdigit(*iterator)) ++iterator;
 
-    if (!firstNum.empty() && it == firstNum.end() && !secondNum.empty() && iterator == secondNum.end()) {
-        return boost::lexical_cast<int>(firstNum) < boost::lexical_cast<int>(secondNum);
+    if (!firstNum->empty() && it == firstNum->end() &&
+        !secondNum->empty() && iterator == secondNum->end()) {
+        return boost::lexical_cast<int>(*firstNum) <
+                boost::lexical_cast<int>(*secondNum);
     } else {
-        for (auto &lin : firstNum) {
+        for (auto &lin : *firstNum) {
             character1 = lin;
         }
 
-        for (auto &line : secondNum) {
+        for (auto &line : *secondNum) {
             character2 = line;
         }
 
