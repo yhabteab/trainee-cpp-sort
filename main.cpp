@@ -286,25 +286,36 @@ bool key_exists(const T &container, const Key &key) {
 void printHelp() {
     cout << "Usage: Program PATH [OPTION] < [FILE] ...\n"
             " or: Program PATH [OPTION] file name\n"
-            "If you execute the sort commands without the o parameter and a new text file,\n"
+            "If you execute the sort commands without "
+            "the o parameter and a new text file,\n"
             "it simply uses the standard output.\n\n";
 
-    cout << "Arguments required for long options are also required for short ones.\n"
+    cout << "Arguments required for long options "
+            "are also required for short ones.\n"
             "Sort options:\n\n";
     cout << "-b, --ignore-leading-blanks    führende Leerzeichen ignorieren\n"
-            "-f, --ignore-case              Klein- als Großbuchstaben behandeln\n"
-            "-n, --numeric-sort             anhand des numerischen Werts sortieren\n"
-            "-R, --random-sort              anhand eines zufälligen Hash der Schlüssel\n"
+            "-f, --ignore-case              Klein- als "
+                                            "Großbuchstaben behandeln\n"
+            "-n, --numeric-sort             anhand des "
+                                            "numerischen Werts sortieren\n"
+            "-R, --random-sort              anhand eines zufälligen "
+                                            "Hash der Schlüssel\n"
             "                               sortieren. Siehe shuf(1)\n"
-            "-r, --reverse                  das Ergebnis der Sortierung umkehren\n"
-            "-o, --output=FILE              Ergebnis in DATEI schreiben statt Standardausgabe\n"
+            "-r, --reverse                  das Ergebnis "
+                                            "der Sortierung umkehren\n"
+            "-o, --output=FILE              Ergebnis in DATEI schreiben "
+                                            "statt Standardausgabe\n"
             "-m, --merge-sort               Merge sort Algorithm benutzen\n"
-            "-u, --unique                   Nur das erste von mehreren Gleichen ausgeben\n"
+            "-u, --unique                   Nur das erste von "
+                                            "mehreren Gleichen ausgeben\n"
             "-q, --quick-sort               Quick sort Algorithm benutzen\n"
-            "-h, --help                     Display this help and the program will be exited\n";
+            "-h, --help                     Display this help and the "
+                                            "program will be exited\n";
 
-    cout << "\n\nif you have any problem executing commands you can open an issue \n"
-            "in github or you can fix it yourself by opening a pull request \n\n"
+    cout << "\n\nif you have any problem executing "
+            "commands you can open an issue \n"
+            "in github or you can fix it yourself "
+            "by opening a pull request \n\n"
             "Thanks for using my sort program :)\n";
 
     exit(EXIT_SUCCESS);
