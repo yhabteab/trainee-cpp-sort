@@ -254,6 +254,7 @@ bool checkNumeric(std::string *firstNum, std::string *secondNum) {
     if (firstNum->empty() || secondNum->empty()) {
         return false;
     }
+
     char character2, character1;
 
     std::string::const_iterator it = firstNum->begin();
