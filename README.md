@@ -28,8 +28,9 @@ To learn more about what they mean and what they are for, see the bunch of sort 
 
 ### Examples of sort commands..
 
-First of all we have to compile our code and this is done by doing the command as follows ``g++ -o output main.cpp``. 
-And the compiled code is saved in the ``output`` file as ``binary code``.
+First of all we have to compile our code and this is done by doing the command as follows ``./build.sh``. This will compile and build your code. 
+If ``./build.sh`` doesn't work for you, you can try ``chmod +x build.sh`` and it should work now. 
+And the compiled code is saved in the ``cpp-sort`` file as ``machine code``.
 
 Now we can e.g. execute this command to sort the contents of the ``in.txt`` file ``numeric-sort``.
 content of ``in.txt`` file:
@@ -45,7 +46,7 @@ content of ``in.txt`` file:
 7
 ```
 The output looks like this, if you run this command 
-``./output -n in.txt`` OR ``./output -n < in.txt``.
+``./cpp-sort -n in.txt`` OR ``./cpp-sort -n < in.txt``.
 ```
 3
 4
@@ -59,15 +60,15 @@ The output looks like this, if you run this command
 ```
 
 if you would like to sort with quick sort or merge sort you only have to change a little bit when executing 
-the commands as follows``./output -q -n in.txt`` OR ``./output --quick-sort -n < in.txt`` 
+the commands as follows``./cpp-sort -q -n in.txt`` OR ``./cpp-sort --quick-sort -n < in.txt`` 
 
-And we do the same with merge sort``./output -m -n in.txt`` OR ``./output --merge-sort -n < in.txt``.
+And we do the same with merge sort``./cpp-sort -m -n in.txt`` OR ``./cpp-sort --merge-sort -n < in.txt``.
 They all work like clockwork.
 
 
 And if you want to store the sorted values ​​in a new file, you only have to do as follows.. 
 
-``./output -n -o output.txt in.txt`` OR ``./output -n --output output.txt < in.txt``
+``./cpp-sort -n -o output.txt in.txt`` OR ``./cpp-sort -n --output output.txt < in.txt``
  then check the ``output.txt`` file.
 ### CONTRIBUTING
 I hope you have as much fun with it as I have when coding and would be very happy if you would develop the program 
