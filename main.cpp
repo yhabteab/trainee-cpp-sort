@@ -33,6 +33,9 @@ bool checkNumeric(std::string *firstNum, std::string *secondNum);
 template<typename T, typename Key>
 bool key_exists(const T &container, const Key &key);
 
+template<typename Key, typename Value>
+bool findByValue(std::map<Key, Value> mapOfElemen, Value value);
+
 void printHelp();
 
 int main(int argc, char **argv) {
@@ -281,6 +284,18 @@ bool checkNumeric(std::string *firstNum, std::string *secondNum) {
 template<typename T, typename Key>
 bool key_exists(const T &container, const Key &key) {
     return container.find(key) != end(container);
+}
+
+template<typename Key, typename Value>
+bool findByValue(std::map<Key, Value> mapOfElemen, Value value) {
+    auto iterator = mapOfElemen.begin();
+    while (iterator != mapOfElemen.end()) {
+        if (iterator->second == value) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void printHelp() {
