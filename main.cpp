@@ -317,8 +317,7 @@ void printHelp() {
             "-r, --reverse                  Reverse the result of the sorting output\n"
             "-o, --output=FILE              Write result to FILE instead of standard output\n"
             "-m, --merge-sort               Use merge sort Algorithm\n"
-            "-u, --unique                   Only the first of "
-											"output several equals\n"
+            "-u, --unique                   Only the first of output several equals\n"
             "-q, --quick-sort               Use Quick sort Algorithm\n"
             "-h, --help                     Display this help and the program will be exited\n";
 
