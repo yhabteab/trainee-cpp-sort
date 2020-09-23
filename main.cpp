@@ -293,6 +293,8 @@ bool findByValue(std::map<Key, Value> mapOfElemen, Value value) {
         if (iterator->second == value) {
             return true;
         }
+
+        iterator++;
     }
 
     return false;
@@ -308,24 +310,17 @@ void printHelp() {
     cout << "Arguments required for long options "
             "are also required for short ones.\n"
             "Sort options:\n\n";
-    cout << "-b, --ignore-leading-blanks    führende Leerzeichen ignorieren\n"
-            "-f, --ignore-case              Klein- als "
-                                            "Großbuchstaben behandeln\n"
-            "-n, --numeric-sort             anhand des "
-                                            "numerischen Werts sortieren\n"
-            "-R, --random-sort              anhand eines zufälligen "
-                                            "Hash der Schlüssel\n"
-            "                               sortieren. Siehe shuf(1)\n"
-            "-r, --reverse                  das Ergebnis "
-                                            "der Sortierung umkehren\n"
-            "-o, --output=FILE              Ergebnis in DATEI schreiben "
-                                            "statt Standardausgabe\n"
-            "-m, --merge-sort               Merge sort Algorithm benutzen\n"
-            "-u, --unique                   Nur das erste von "
-                                            "mehreren Gleichen ausgeben\n"
-            "-q, --quick-sort               Quick sort Algorithm benutzen\n"
-            "-h, --help                     Display this help and the "
-                                            "program will be exited\n";
+    cout << "-b, --ignore-leading-blanks    Ignore leading spaces\n"
+            "-f, --ignore-case              Treat lower case as upper case\n"
+            "-n, --numeric-sort             Sort by numeric value\n"
+            "-R, --random-sort              Use a random hash to sort the keys. See shuf(1)\n"
+            "-r, --reverse                  Reverse the result of the sorting output\n"
+            "-o, --output=FILE              Write result to FILE instead of standard output\n"
+            "-m, --merge-sort               Use merge sort Algorithm\n"
+            "-u, --unique                   Only the first of "
+											"output several equals\n"
+            "-q, --quick-sort               Use Quick sort Algorithm\n"
+            "-h, --help                     Display this help and the program will be exited\n";
 
     cout << "\n\nif you have any problem executing "
             "commands you can open an issue \n"
